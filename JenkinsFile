@@ -1,0 +1,19 @@
+pipeline {
+    agent { label 'windows'}
+    stages {
+        stage ('Checkout') {
+          steps {
+            git 'https://github.com/SH2309/MileStone-3.git'
+          }
+        }
+        stage('Build') {
+            agent { docker 'maven:3.5-alpine' }
+            steps {
+                sh 'mvn clean package'
+                junit '**/target/surefire-reports/TEST-*.xml'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+       
+    }
+}
